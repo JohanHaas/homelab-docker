@@ -4,7 +4,7 @@ services:
     image: myoung34/github-runner:latest
     restart: unless-stopped
     container_name: github-runner
-    env_file: .env
+    env_file: /home/admin/docker/runner/.env
     environment:
       ORG_RUNNER_TOKEN: ${GITHUB_RUNNER_TOKEN}
       ORG_RUNNER_REPOSITORY_URL: ${GITHUB_RUNNER_REPO_URL}
