@@ -1,6 +1,7 @@
 services:
   nextcloud:
     image: ${NEXTCLOUD_IMAGE}
+    container_name: nextcloud-aio-mastercontainer
     init: true
     restart: unless-stopped
     environment:
