@@ -1,0 +1,55 @@
+services:
+
+  caddy:
+    image: ${CADDY_IMAGE}
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ${CADDY_CONF}:/etc/caddy:ro
+      - ${CADDY_DATA}:/data
+      - ${CADDY_CONFIG}:/config
+    networks:
+      - proxy
+
+  headscale:
+    image: ${HEADSCALE_IMAGE}
+    restart: unless-stopped
+    container_name: headscale
+    read_only: true
+    tmpfs:
+      - /var/run/headscale
+    ports:
+      # STUN for the embedded DERP server.
+      - "3478:3478/udp"
+    volumes:
+      - ${HEADSCALE_CONFIG}:/etc/headscale:ro
+      - ${HEADSCALE_LIB}:/var/lib/headscale
+    command: serve
+    stop_grace_period: 30s
+    healthcheck:
+      test: ["CMD", "headscale", "health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - proxy
+
+
+
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+
+networks:
+  proxy:
+    ipam:
+      config:
+        - subnet: ${PROXY_SUBNET}

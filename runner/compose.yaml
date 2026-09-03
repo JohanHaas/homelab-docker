@@ -1,0 +1,14 @@
+services:
+
+  github-runner:
+    image: myoung34/github-runner:latest
+    restart: unless-stopped
+    container_name: github-runner
+    environment:
+      ORG_RUNNER_TOKEN: ${GITHUB_RUNNER_TOKEN}
+      ORG_RUNNER_REPOSITORY_URL: ${GITHUB_RUNNER_REPO_URL}
+      ORG_RUNNER_LABELS: ${RUNNER_LABELS}
+      RUNNER_WORKDIR: /tmp/runner
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${PWD}/runner:/tmp/runner

@@ -1,0 +1,22 @@
+# Environment variables - only ignored in runner/ subdirectory (.gitignore there)
+
+# Volume data (persistent Docker volumes)
+caddy_data/
+caddy_config/
+
+# Service data directories (exclude data, keep config)
+headscale/lib/*
+!headscale/lib/.gitkeep
+
+# Secrets
+*.key
+*.cert
+*.pem
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

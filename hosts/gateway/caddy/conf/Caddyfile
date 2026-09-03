@@ -1,0 +1,4 @@
+
+headscale.johanhaas.de {
+    reverse_proxy headscale:8080
+}

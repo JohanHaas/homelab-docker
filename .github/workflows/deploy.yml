@@ -1,0 +1,12 @@
+name: Deploy
+
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, gateway]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run deploy script
+        run: /home/johan/docker/deploy.sh

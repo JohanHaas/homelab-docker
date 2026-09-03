@@ -1,0 +1,37 @@
+{ config, pkgs, ... }:
+
+let
+  # Passe diese Variablen an:
+  hostName = "gateway";  # z.B. "gateway" oder "homelab"
+  runnerLabels = "gateway,self-hosted";
+  workDir = "/home/admin/docker/runner";  # Muss auf runner/ zeigen für .env Datei!
+  composeFile = "compose.yaml";
+  runnerUser = "admin";
+  # Secrets kommen aus .env Datei, nicht aus hier!
+in
+{
+  systemd.services."${hostName}-runner" = {
+    description = "GitHub Actions Runner - ${hostName}";
+    after = [ "docker.service" "network-online.target" ];
+    requires = [ "docker.service" ];
+    wants = [ "network-online.target" ];
+
+    serviceConfig = {
+      Type = "simple";
+      User = runnerUser;
+      WorkingDirectory = workDir;
+
+      # .env wird von docker-compose geladen (neben compose.yaml)
+      Environment = [
+        "RUNNER_LABELS=${runnerLabels}"
+        "PATH=/run/current-system/sw/bin:/run/wrappers/bin:/usr/bin:/bin"
+      ];
+
+      ExecStart = "${pkgs.docker}/bin/docker compose -f ${composeFile} up";
+      Restart = "always";
+      RestartSec = 10;
+    };
+
+    wantedBy = [ "multi-user.target" ];
+  };
+}
