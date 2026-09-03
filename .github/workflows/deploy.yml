@@ -7,6 +7,9 @@ jobs:
     runs-on: [self-hosted, gateway]
     steps:
       - uses: actions/checkout@v3
+        with:
+          path: /home/johan/docker
 
       - name: Run deploy script
-        run: /home/johan/docker/deploy.sh
+        working-directory: /home/johan/docker
+        run: bash ./deploy.sh
