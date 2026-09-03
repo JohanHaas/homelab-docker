@@ -1,10 +1,16 @@
-
-# Nur aus dem Tailnet erreichbar. Greift, weil Clients ueber die Tailnet-IP
-# des Gateways (100.64.0.2) reinkommen und damit eine 100.64.x-Quelladresse
-# haben -- siehe extra_records in der headscale-config.
-(tailnet_only) {
-	@public not remote_ip 100.64.0.0/10 fd7a:115c:a1e0::/48
-	handle @public {
+# Nur aus dem Tailnet erreichbar, ausser den Pfaden, die eine oeffentliche
+# Freigabe braucht. Bewusst eng gehalten: fehlt etwas, zeigt sich das als 403
+# in den Entwicklertools beim Oeffnen eines Links von aussen -- dann gezielt
+# ergaenzen, statt vorsorglich ganze Praefixe freizugeben.
+(tailnet_only_except_shares) {
+	@blocked {
+		not remote_ip 100.64.0.0/10 fd7a:115c:a1e0::/48
+		not path /s/* /index.php/s/*
+		not path /public.php /public.php/*
+		not path /core/* /dist/* /themes/*
+		not path /apps/theming/* /apps/files_sharing/* /apps/viewer/*
+	}
+	handle @blocked {
 		respond "Not available" 403
 	}
 }
@@ -14,7 +20,7 @@ headscale.johanhaas.de {
 }
 
 cloud.johanhaas.de {
-	import tailnet_only
+	import tailnet_only_except_shares
 	handle {
 		reverse_proxy 100.64.0.1:11000
 	}

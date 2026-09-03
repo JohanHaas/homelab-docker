@@ -11,7 +11,6 @@ services:
       # Plain-HTTP auf 11000. TLS terminiert Caddy auf dem Gateway.
       APACHE_PORT: ${APACHE_PORT}
       APACHE_IP_BINDING: ${APACHE_IP_BINDING}
-      NEXTCLOUD_TRUSTED_PROXIES: ${NEXTCLOUD_TRUSTED_PROXIES}
     volumes:
       - nextcloud_aio_mastercontainer:/mnt/docker-aio-config
       - /var/run/docker.sock:/var/run/docker.sock:ro
