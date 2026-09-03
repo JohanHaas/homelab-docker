@@ -14,5 +14,3 @@ jobs:
           git pull origin main
           cd hosts/gateway
           docker compose up -d
-          cd ../homelab
-          docker compose -f ../../runner/compose.yaml up -d
