@@ -8,7 +8,7 @@ services:
     environment:
       RUNNER_SCOPE: repo
       REPO_URL: ${GITHUB_RUNNER_REPO_URL}
-      RUNNER_TOKEN: ${GITHUB_RUNNER_TOKEN}
+      ACCESS_TOKEN: ${GITHUB_ACCESS_TOKEN}
       LABELS: ${RUNNER_LABELS}
       RUNNER_WORKDIR: /tmp/runner
     volumes:
