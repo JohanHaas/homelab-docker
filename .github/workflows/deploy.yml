@@ -10,7 +10,7 @@ jobs:
 
       - name: Deploy
         run: |
-          cd /home/johan/docker
+          cd ${{ github.workspace }}
           git pull origin main
           cd hosts/gateway
           docker compose up -d
