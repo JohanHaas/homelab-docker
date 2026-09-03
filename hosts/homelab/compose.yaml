@@ -1,0 +1,25 @@
+services:
+  nextcloud:
+    image: ${NEXTCLOUD_IMAGE}
+    init: true
+    restart: unless-stopped
+    environment:
+      # Host-Pfad, in dem AIO die Nextcloud-Nutzerdaten ablegt.
+      NEXTCLOUD_DATADIR: ${NEXTCLOUD_DATADIR}
+      # Reverse-Proxy-Betrieb: AIO macht kein eigenes TLS, sondern spricht
+      # Plain-HTTP auf 11000. TLS terminiert Caddy auf dem Gateway.
+      APACHE_PORT: ${APACHE_PORT}
+      APACHE_IP_BINDING: ${APACHE_IP_BINDING}
+      NEXTCLOUD_TRUSTED_PROXIES: ${NEXTCLOUD_TRUSTED_PROXIES}
+    volumes:
+      - nextcloud_aio_mastercontainer:/mnt/docker-aio-config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "8443:8443"
+
+
+volumes:
+  nextcloud_aio_mastercontainer:
+    name: nextcloud_aio_mastercontainer

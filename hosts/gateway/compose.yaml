@@ -46,6 +46,7 @@ services:
 volumes:
   caddy_data:
   caddy_config:
+  headscale_lib:
 
 
 networks:

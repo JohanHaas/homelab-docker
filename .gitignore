@@ -4,10 +4,8 @@
 caddy_data/
 caddy_config/
 
-# Service data directories (exclude data, keep config)
 headscale/lib/*
 !headscale/lib/.gitkeep
-headscale/lib/db.sqlite
 
 # Secrets
 *.key

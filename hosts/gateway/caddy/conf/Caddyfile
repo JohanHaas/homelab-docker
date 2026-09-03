@@ -1,4 +1,21 @@
 
+# Nur aus dem Tailnet erreichbar. Greift, weil Clients ueber die Tailnet-IP
+# des Gateways (100.64.0.2) reinkommen und damit eine 100.64.x-Quelladresse
+# haben -- siehe extra_records in der headscale-config.
+(tailnet_only) {
+	@public not remote_ip 100.64.0.0/10 fd7a:115c:a1e0::/48
+	handle @public {
+		respond "Not available" 403
+	}
+}
+
 headscale.johanhaas.de {
-    reverse_proxy headscale:8080
+	reverse_proxy headscale:8080
+}
+
+cloud.johanhaas.de {
+	import tailnet_only
+	handle {
+		reverse_proxy 100.64.0.1:11000
+	}
 }

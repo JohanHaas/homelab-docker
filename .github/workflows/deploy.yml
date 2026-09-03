@@ -1,21 +1,47 @@
 name: Deploy
 
-on: [push]
-
-# Verhindert, dass sich mehrere Pushes zu einem Job-Stau aufstauen.
-concurrency:
-  group: deploy-gateway
-  cancel-in-progress: true
+on:
+  push:
+    branches: [main]
 
 jobs:
   deploy:
-    runs-on: [self-hosted, gateway]
+    strategy:
+      # Ein kaputter Host soll den anderen nicht mit abbrechen.
+      fail-fast: false
+      matrix:
+        host: [gateway, homelab]
+
+
+    runs-on: [self-hosted, "${{ matrix.host }}"]
+
+    # Pro Host eine eigene Gruppe
+    concurrency:
+      group: deploy-${{ matrix.host }}
+      cancel-in-progress: true
+
+    # Runner timeout
+    timeout-minutes: 20
+
     steps:
       - name: Deploy
         run: |
+          set -euo pipefail
+
           git config --global --add safe.directory /home/admin/docker
           cd /home/admin/docker
           git fetch origin main
+
+          # `reset --hard` setzt nur getrackte Dateien zurueck, ignorierte
+          # Laufzeitdaten bleiben liegen. Deshalb hier NIEMALS `git clean -xfd`
+          # ergaenzen -- das wuerde genau diesen State loeschen.
           git reset --hard origin/main
-          cd hosts/gateway
+
+          cd hosts/${{ matrix.host }}
+
+          # Kaputtes Compose-File soll die laufenden Services nicht anfassen.
+          docker compose config -q
+
+          # Kein `down`, kein `-v`: `up -d` recreated nur was sich geaendert hat,
+          # Named Volumes und Bind-Mounts bleiben unberuehrt.
           docker compose up -d --remove-orphans
