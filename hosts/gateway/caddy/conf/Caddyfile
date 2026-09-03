@@ -2,3 +2,7 @@
 headscale.johanhaas.de {
     reverse_proxy headscale:8080
 }
+
+johanhaas.de {
+    reverse_proxy whoami:80
+}

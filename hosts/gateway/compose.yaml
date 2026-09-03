@@ -16,6 +16,15 @@ services:
     networks:
       - proxy
 
+  # Testservice fuer die Deploy-Pipeline: gibt Hostname und Request-Header
+  # zurueck, damit sichtbar ist, ob wirklich ein neuer Container antwortet.
+  whoami:
+    image: ${WHOAMI_IMAGE}
+    restart: unless-stopped
+    container_name: whoami
+    networks:
+      - proxy
+
   headscale:
     image: ${HEADSCALE_IMAGE}
     restart: unless-stopped

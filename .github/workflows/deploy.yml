@@ -2,16 +2,20 @@ name: Deploy
 
 on: [push]
 
+# Verhindert, dass sich mehrere Pushes zu einem Job-Stau aufstauen.
+concurrency:
+  group: deploy-gateway
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: [self-hosted, gateway]
     steps:
-      - uses: actions/checkout@v3
-
       - name: Deploy
         run: |
-          cd ${{ github.workspace }}
-          git pull origin main
+          git config --global --add safe.directory /home/admin/docker
+          cd /home/admin/docker
+          git fetch origin main
+          git reset --hard origin/main
           cd hosts/gateway
-          docker compose down
-          docker compose up -d
+          docker compose up -d --remove-orphans
