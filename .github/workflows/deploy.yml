@@ -7,9 +7,12 @@ jobs:
     runs-on: [self-hosted, gateway]
     steps:
       - uses: actions/checkout@v3
-        with:
-          path: /home/johan/docker
 
-      - name: Run deploy script
-        working-directory: /home/johan/docker
-        run: bash ./deploy.sh
+      - name: Deploy
+        run: |
+          cd /home/johan/docker
+          git pull origin main
+          cd hosts/gateway
+          docker compose up -d
+          cd ../homelab
+          docker compose -f ../../runner/compose.yaml up -d
